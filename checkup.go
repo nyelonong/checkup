@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/goModule/redigo/redis"
+	"github.com/gomodule/redigo/redis"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
