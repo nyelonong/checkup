@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gomodule/redigo/redis"
+	"github.com/goModule/redigo/redis"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
@@ -44,7 +44,7 @@ type (
 		Conn string `yaml:"conn"`
 	}
 
-	module struct {
+	Module struct {
 		dep Dependency
 	}
 )
@@ -79,7 +79,7 @@ func infoLog(info string) {
 	log.Println("[CHECKUP][INFO]", info)
 }
 
-func New(file string, debug bool) (*module, error) {
+func New(file string, debug bool) (*Module, error) {
 	isDebug = debug
 
 	dep, err := readDependencies(file)
@@ -89,12 +89,12 @@ func New(file string, debug bool) (*module, error) {
 	}
 
 	log.Println("[CHECKUP][INFO] Dependencies file successfully loaded from", file)
-	return &module{
+	return &Module{
 		dep: dep,
 	}, nil
 }
 
-func (m module) Checkup() error {
+func (m Module) Checkup() error {
 	var group = sync.WaitGroup{}
 	var errs []error
 
@@ -163,7 +163,7 @@ func (m module) Checkup() error {
 	return nil
 }
 
-func (m module) checkupAPI() error {
+func (m Module) checkupAPI() error {
 	for _, api := range m.dep.API {
 		sc, err := doHTTPCall(api)
 		if err != nil {
@@ -179,7 +179,7 @@ func (m module) checkupAPI() error {
 	return nil
 }
 
-func (m module) checkupPostgres() error {
+func (m Module) checkupPostgres() error {
 	for _, psql := range m.dep.Database.Postgres {
 		db, err := sqlx.Connect("postgres", psql.Conn)
 		if err != nil {
@@ -199,7 +199,7 @@ func (m module) checkupPostgres() error {
 	return nil
 }
 
-func (m module) checkupRedis() error {
+func (m Module) checkupRedis() error {
 	for _, red := range m.dep.Database.Redis {
 		r, err := redis.Dial("tcp", red.Conn)
 		if err != nil {
@@ -218,7 +218,7 @@ func (m module) checkupRedis() error {
 	return nil
 }
 
-func (m module) checkupGrpc() error {
+func (m Module) checkupGrpc() error {
 	for _, g := range m.dep.Grpc {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(g.Timeout))
 		defer cancel()
