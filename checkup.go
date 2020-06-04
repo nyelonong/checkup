@@ -45,7 +45,7 @@ type (
 	}
 
 	Module struct {
-		dep Dependency
+	 	Dep Dependency
 	}
 )
 
@@ -98,7 +98,7 @@ func (m Module) Checkup() error {
 	var group = sync.WaitGroup{}
 	var errs []error
 
-	if len(m.dep.API) > 0 {
+	if len(m.Dep.API) > 0 {
 		group.Add(1)
 		go func() {
 			defer func() {
@@ -111,7 +111,7 @@ func (m Module) Checkup() error {
 		}()
 	}
 
-	if len(m.dep.Database.Postgres) > 0 {
+	if len(m.Dep.Database.Postgres) > 0 {
 		group.Add(1)
 		go func() {
 			defer func() {
@@ -124,7 +124,7 @@ func (m Module) Checkup() error {
 		}()
 	}
 
-	if len(m.dep.Database.Redis) > 0 {
+	if len(m.Dep.Database.Redis) > 0 {
 		group.Add(1)
 		go func() {
 			defer func() {
@@ -137,7 +137,7 @@ func (m Module) Checkup() error {
 		}()
 	}
 
-	if len(m.dep.Grpc) > 0 {
+	if len(m.Dep.Grpc) > 0 {
 		group.Add(1)
 		go func() {
 			defer func() {
@@ -164,7 +164,7 @@ func (m Module) Checkup() error {
 }
 
 func (m Module) checkupAPI() error {
-	for _, api := range m.dep.API {
+	for _, api := range m.Dep.API {
 		sc, err := doHTTPCall(api)
 		if err != nil {
 			return ErrHTTPCall
@@ -180,7 +180,7 @@ func (m Module) checkupAPI() error {
 }
 
 func (m Module) checkupPostgres() error {
-	for _, psql := range m.dep.Database.Postgres {
+	for _, psql := range m.Dep.Database.Postgres {
 		db, err := sqlx.Connect("postgres", psql.Conn)
 		if err != nil {
 			debugLog(err)
@@ -200,7 +200,7 @@ func (m Module) checkupPostgres() error {
 }
 
 func (m Module) checkupRedis() error {
-	for _, red := range m.dep.Database.Redis {
+	for _, red := range m.Dep.Database.Redis {
 		r, err := redis.Dial("tcp", red.Conn)
 		if err != nil {
 			debugLog(err)
@@ -219,7 +219,7 @@ func (m Module) checkupRedis() error {
 }
 
 func (m Module) checkupGrpc() error {
-	for _, g := range m.dep.Grpc {
+	for _, g := range m.Dep.Grpc {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(g.Timeout))
 		defer cancel()
 
