@@ -90,7 +90,7 @@ func New(file string, debug bool) (*Module, error) {
 
 	log.Println("[CHECKUP][INFO] Dependencies file successfully loaded from", file)
 	return &Module{
-		dep: dep,
+		Dep: dep,
 	}, nil
 }
 
