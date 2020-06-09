@@ -50,7 +50,7 @@ type (
 )
 
 var (
-	isDebug bool
+	isDebug, isInfo bool
 )
 
 func readDependencies(file string) (Dependency, error) {
@@ -76,11 +76,14 @@ func debugLog(err error) {
 }
 
 func infoLog(info string) {
-	log.Println("[CHECKUP][INFO]", info)
+	if isInfo{
+		log.Println("[CHECKUP][INFO]", info)
+	}
 }
 
-func New(file string, debug bool) (*Module, error) {
+func New(file string, debug bool, info bool) (*Module, error) {
 	isDebug = debug
+	isInfo = info
 
 	dep, err := readDependencies(file)
 	if err != nil {

@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	check, err := checkup.New("dep.yaml", true)
+	check, err := checkup.New("dep.yaml", true, true)
 	if err != nil {
 		log.Println(err)
 	}
